@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.graph.workflow import run_chat, stream_chat
@@ -17,6 +20,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+if frontend_dist.exists():
+    assets_dir = frontend_dist / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="frontend-assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    async def serve_frontend(path: str | None = None):
+        if path and path.startswith("api"):
+            raise HTTPException(status_code=404, detail="Not found")
+        return FileResponse(frontend_dist / "index.html")
 
 
 @app.get("/health")

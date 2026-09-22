@@ -24,10 +24,11 @@ RUN uv sync --frozen --no-dev
 COPY backend/app ./app
 
 FROM python:3.12-slim AS runtime
-WORKDIR /app
+WORKDIR /app/backend
 
 ARG APP_ENV=production
-ENV APP_ENV=${APP_ENV} 
+ENV APP_ENV=${APP_ENV} \
+    PYTHONPATH=/app/backend
 
 RUN addgroup --system app && adduser --system --ingroup app app
 

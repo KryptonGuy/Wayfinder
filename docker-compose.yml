@@ -1,5 +1,6 @@
 services:
   wayfinder:
+    image: "${IMAGE_NAME:-wayfinder}:${IMAGE_TAG:-local}"
     build:
       context: .
       dockerfile: Dockerfile

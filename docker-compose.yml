@@ -1,0 +1,32 @@
+services:
+  wayfinder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wayfinder-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      APP_ENV: production
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GOOGLE_MODEL: ${GOOGLE_MODEL:-gemini-3.5-flash}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
+    volumes:
+      - app_data:/var/lib/wayfinder
+    networks:
+      - wayfinder-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+volumes:
+  app_data:
+    driver: local
+
+networks:
+  wayfinder-network:
+    driver: bridge

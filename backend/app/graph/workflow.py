@@ -40,6 +40,8 @@ def _get_chat_graph():
     graph.add_edge("llm", END)
     return graph.compile()
 
+graph = _get_chat_graph()
+
 
 async def run_chat(messages: list[ChatMessage]) -> str:
     result = await _get_chat_graph().ainvoke({"messages": _to_langchain_messages(messages)})

@@ -17,7 +17,9 @@ cd ..
 cp .env.example .env
 ```
 
-Set `GOOGLE_API_KEY` in `.env`.
+Set `LLM_PROVIDER` to `google` or `openrouter` in `.env` (it defaults to `google`), then provide the matching API key. Configure the model with `GOOGLE_MODEL` or `OPENROUTER_MODEL`.
+
+For Google, set `GOOGLE_API_KEY`. For OpenRouter, set `OPENROUTER_API_KEY`; the default model is `openai/gpt-4o-mini`.
 
 ## Run
 

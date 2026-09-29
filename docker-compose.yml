@@ -10,8 +10,11 @@ services:
       - "${APP_PORT:-8000}:8000"
     environment:
       APP_ENV: production
+      LLM_PROVIDER: ${LLM_PROVIDER:-google}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       GOOGLE_MODEL: ${GOOGLE_MODEL:-gemini-3.5-flash}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openai/gpt-4o-mini}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
     volumes:
       - app_data:/var/lib/wayfinder

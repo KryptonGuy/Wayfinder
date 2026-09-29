@@ -19,6 +19,16 @@ def _to_langchain_messages(messages: list[ChatMessage]) -> list[BaseMessage]:
     return converted
 
 
+def _content_text(content) -> str:
+    if isinstance(content, str):
+        return content
+    return "".join(
+        part if isinstance(part, str) else part.get("text", "")
+        for part in content
+        if isinstance(part, str) or part.get("type") == "text"
+    )
+
+
 @lru_cache
 def _get_chat_graph():
     settings = get_settings()
@@ -46,7 +56,7 @@ graph = _get_chat_graph()
 async def run_chat(messages: list[ChatMessage]) -> str:
     result = await _get_chat_graph().ainvoke({"messages": _to_langchain_messages(messages)})
     last_message = result["messages"][-1]
-    return str(last_message.content)
+    return _content_text(last_message.content)
 
 
 async def stream_chat(messages: list[ChatMessage]):
@@ -54,6 +64,6 @@ async def stream_chat(messages: list[ChatMessage]):
         {"messages": _to_langchain_messages(messages)},
         stream_mode="messages",
     ):
-        content = message_chunk.content
-        if isinstance(content, str) and content:
+        content = _content_text(message_chunk.content)
+        if content:
             yield content
